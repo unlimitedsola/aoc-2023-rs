@@ -1,3 +1,4 @@
+use std::cmp::{max, min};
 use std::str::Lines;
 
 use itertools::Itertools;
@@ -37,62 +38,28 @@ impl Mapping {
     }
 
     fn apply2(&self, seed: &Seed) -> Option<(Seed, Vec<Seed>)> {
-        // I gave up optimizing this!
-        if (seed.i..seed.i + seed.len).contains(&self.src) { // seed starts before mapping
-            if seed.i + seed.len > self.src + self.len { // seed ends after mapping
-                let intersect = Seed {
-                    i: self.dst,
-                    len: self.len,
-                };
-                let trail = Seed {
-                    i: self.src + self.len, // starts after intersect
-                    len: seed.i + seed.len - self.src - self.len, // seed.end - mapping.end
-                };
-                if seed.i == self.src { // no head
-                    Some((intersect, vec![trail]))
-                } else {
-                    let head = Seed {
-                        i: seed.i,
-                        len: self.src - seed.i,
-                    };
-                    Some((intersect, vec![head, trail]))
-                }
-            } else {
-                let intersect = Seed {
-                    i: self.dst,
-                    len: seed.i + seed.len - self.src,
-                };
-                if seed.i == self.src { // no head
-                    Some((intersect, vec![]))
-                } else {
-                    let head = Seed {
-                        i: seed.i,
-                        len: self.src - seed.i,
-                    };
-                    Some((intersect, vec![head]))
-                }
-            }
-        } else if (self.src..self.src + self.len).contains(&seed.i) { // seed starts within mapping
-            if seed.i + seed.len > self.src + self.len { // seed ends after mapping
-                let intersect = Seed {
-                    i: self.dst + seed.i - self.src,
-                    len: self.len + self.src - seed.i,
-                };
-                let trail = Seed {
-                    i: self.src + self.len,
-                    len: seed.i + seed.len - self.src - self.len,
-                };
-                Some((intersect, vec![trail]))
-            } else {
-                let intersect = Seed {
-                    i: self.dst + seed.i - self.src,
-                    len: seed.len,
-                };
-                Some((intersect, vec![]))
-            }
-        } else {
-            None
+        if !(seed.i..seed.i + seed.len).contains(&self.src) && !(self.src..self.src + self.len).contains(&seed.i) {
+            return None;
         }
+        let start = max(self.src, seed.i);
+        let end = min(self.src + self.len, seed.i + seed.len);
+        let len = end - start;
+        let mapped = Seed { i: self.dst + start - self.src, len };
+
+        let mut rem = vec![];
+        if seed.i < self.src { // head
+            rem.push(Seed {
+                i: seed.i,
+                len: self.src - seed.i,
+            });
+        }
+        if seed.i + seed.len > self.src + self.len { // tail
+            rem.push(Seed {
+                i: end,
+                len: seed.i + seed.len - end,
+            });
+        }
+        Some((mapped, rem))
     }
 
     fn parse(line: &str) -> Self {
