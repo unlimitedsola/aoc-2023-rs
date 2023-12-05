@@ -45,7 +45,7 @@ impl Mapping {
                     len: self.len,
                 };
                 let trail = Seed {
-                    i: seed.i + self.len, // starts after intersect
+                    i: self.src + self.len, // starts after intersect
                     len: seed.i + seed.len - self.src - self.len, // seed.end - mapping.end
                 };
                 if seed.i == self.src { // no head
@@ -139,7 +139,7 @@ fn part1<I>(mut seeds: Vec<u64>, maps: &[I]) where I: AsRef<[Mapping]> {
     println!("part1: {}", seeds.first().unwrap())
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 struct Seed {
     i: u64,
     len: u64,
@@ -164,13 +164,32 @@ fn part2<I>(mut seeds: Vec<Seed>, maps: &[I]) where I: AsRef<[Mapping]> {
 
 fn do_map(mut seeds: Vec<Seed>, map: &[Mapping]) -> Vec<Seed> {
     let mut res = vec![];
-    while let Some(seed) = seeds.pop() {
+    'seed: while let Some(seed) = seeds.pop() {
         for mapping in map {
             if let Some((mapped, rem)) = mapping.apply2(&seed) {
                 res.push(mapped);
-                seeds.extend(rem)
+                seeds.extend(rem);
+                continue 'seed;
             }
         }
+        res.push(seed)
     }
     res
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn mapping_apply() {
+        let m = Mapping { src: 10, dst: 100, len: 10 };
+        assert_eq!(m.apply2(&Seed { i: 5, len: 15 }), Some((Seed { i: 100, len: 10 }, vec![Seed { i: 5, len: 5 }])));
+        assert_eq!(m.apply2(&Seed { i: 25, len: 15 }), None);
+        assert_eq!(m.apply2(&Seed { i: 15, len: 15 }), Some((Seed { i: 105, len: 5 }, vec![Seed { i: 20, len: 10 }])));
+        assert_eq!(m.apply2(&Seed { i: 10, len: 10 }), Some((Seed { i: 100, len: 10 }, vec![])));
+        assert_eq!(m.apply2(&Seed { i: 12, len: 3 }), Some((Seed { i: 102, len: 3 }, vec![])));
+        assert_eq!(m.apply2(&Seed { i: 5, len: 10 }), Some((Seed { i: 100, len: 5 }, vec![Seed { i: 5, len: 5 }])));
+        assert_eq!(m.apply2(&Seed { i: 5, len: 20 }), Some((Seed { i: 100, len: 10 }, vec![Seed { i: 5, len: 5 }, Seed { i: 20, len: 5 }])));
+    }
 }
