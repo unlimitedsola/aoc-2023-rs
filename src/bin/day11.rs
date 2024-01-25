@@ -12,11 +12,11 @@ fn main() {
 }
 
 fn solve(map: &Map) -> usize {
-    map.grid.galaxies().into_iter()
+    map.grid
+        .galaxies()
+        .into_iter()
         .tuple_combinations()
-        .map(|(a, b)| {
-            map.distance(map.translate(a), map.translate(b))
-        })
+        .map(|(a, b)| map.distance(map.translate(a), map.translate(b)))
         .sum()
 }
 
@@ -24,10 +24,16 @@ struct Grid(Vec<Vec<char>>); // [row][col]
 
 impl Grid {
     fn parse(input: &str) -> Self {
-        Self(input.lines().map(|line| line.chars().collect_vec()).collect_vec())
+        Self(
+            input
+                .lines()
+                .map(|line| line.chars().collect_vec())
+                .collect_vec(),
+        )
     }
 
-    fn size(&self) -> (usize, usize) { // x, y
+    fn size(&self) -> (usize, usize) {
+        // x, y
         (self.0[0].len(), self.0.len())
     }
 
@@ -89,7 +95,11 @@ impl Map {
         let grid = Grid::parse(input);
         let x_remap = grid.remap_cols(expand_factor);
         let y_remap = grid.remap_rows(expand_factor);
-        Self { grid, x_remap, y_remap }
+        Self {
+            grid,
+            x_remap,
+            y_remap,
+        }
     }
 
     fn translate(&self, pos: (usize, usize)) -> (usize, usize) {

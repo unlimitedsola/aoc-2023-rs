@@ -29,7 +29,10 @@ fn part1(map: &Map) -> usize {
             let connects = map.connects_to(pos);
             next.extend(connects);
         }
-        cur = next.into_iter().filter(|pos| !visited[pos.x][pos.y]).collect_vec();
+        cur = next
+            .into_iter()
+            .filter(|pos| !visited[pos.x][pos.y])
+            .collect_vec();
         mv_cnt += 1;
     }
     mv_cnt - 1
@@ -53,9 +56,12 @@ fn part2(map: &Map) -> usize {
     }
     let b = boundary.len();
     // Shoelace: A = sum((y1 + y2) * (x1 - x2)) / 2
-    let area = boundary.into_iter().circular_tuple_windows()
+    let area = boundary
+        .into_iter()
+        .circular_tuple_windows()
         .map(|(p1, p2)| (p1.y as i64 + p2.y as i64) * (p1.x as i64 - p2.x as i64))
-        .sum::<i64>() / 2;
+        .sum::<i64>()
+        / 2;
     // Pick's theorem: A = i + b / 2 - 1 => i = A - b / 2 + 1
     abs(area) as usize - b / 2 + 1
 }
@@ -89,7 +95,12 @@ struct Map(Vec<Vec<char>>); // [y][x]
 
 impl Map {
     fn parse(input: &str) -> Self {
-        Self(input.lines().map(|line| line.chars().collect_vec()).collect_vec())
+        Self(
+            input
+                .lines()
+                .map(|line| line.chars().collect_vec())
+                .collect_vec(),
+        )
     }
 
     fn size(&self) -> (usize, usize) {
@@ -101,21 +112,29 @@ impl Map {
     }
 
     fn starting_pos(&self) -> Pos {
-        self.0.iter().enumerate().find_map(|(y, line)| {
-            line.iter().enumerate().find_map(|(x, &c)| {
-                if c == 'S' {
-                    Some(Pos { x, y })
-                } else {
-                    None
-                }
+        self.0
+            .iter()
+            .enumerate()
+            .find_map(|(y, line)| {
+                line.iter().enumerate().find_map(
+                    |(x, &c)| {
+                        if c == 'S' {
+                            Some(Pos { x, y })
+                        } else {
+                            None
+                        }
+                    },
+                )
             })
-        }).unwrap()
+            .unwrap()
     }
 
     fn connects_to(&self, pos: Pos) -> Vec<Pos> {
-        [Up, Down, Left, Right].into_iter()
+        [Up, Down, Left, Right]
+            .into_iter()
             .filter(|&d| self.get(pos).connects(d))
-            .filter_map(|d| self.nav(pos, d)).collect_vec()
+            .filter_map(|d| self.nav(pos, d))
+            .collect_vec()
     }
 
     fn nav(&self, pos: Pos, direction: Direction) -> Option<Pos> {
@@ -141,13 +160,13 @@ impl Pipe for char {
     fn connects(&self, to: Direction) -> bool {
         matches!(
             (self, to),
-            ('|', Up | Down) |
-            ('-', Left | Right) |
-            ('L', Up | Right) |
-            ('J', Up | Left) |
-            ('7', Left | Down) |
-            ('F', Down | Right) |
-            ('S', _)
+            ('|', Up | Down)
+                | ('-', Left | Right)
+                | ('L', Up | Right)
+                | ('J', Up | Left)
+                | ('7', Left | Down)
+                | ('F', Down | Right)
+                | ('S', _)
         )
     }
 
@@ -166,15 +185,25 @@ mod tests {
 
     #[test]
     fn p1() {
-        assert_eq!(part1(&Map::parse(r#"..F7.
+        assert_eq!(
+            part1(&Map::parse(
+                r#"..F7.
 .FJ|.
 SJ.L7
 |F--J
-LJ..."#)), 8);
-        assert_eq!(part1(&Map::parse(r#".....
+LJ..."#
+            )),
+            8
+        );
+        assert_eq!(
+            part1(&Map::parse(
+                r#".....
 .S-7.
 .|.|.
 .L-J.
-....."#)), 4);
+....."#
+            )),
+            4
+        );
     }
 }

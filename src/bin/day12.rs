@@ -11,13 +11,15 @@ fn main() {
     part2(&input);
 }
 
-fn parse(input: &str) -> impl Iterator<Item=(&str, Vec<usize>)> {
-    input.lines()
-        .map(|line| {
-            let (input, counts) = line.split_once(' ').unwrap();
-            let counts = counts.split(',').map(|c| c.parse::<usize>().unwrap()).collect_vec();
-            (input, counts)
-        })
+fn parse(input: &str) -> impl Iterator<Item = (&str, Vec<usize>)> {
+    input.lines().map(|line| {
+        let (input, counts) = line.split_once(' ').unwrap();
+        let counts = counts
+            .split(',')
+            .map(|c| c.parse::<usize>().unwrap())
+            .collect_vec();
+        (input, counts)
+    })
 }
 
 fn part1(input: &str) {

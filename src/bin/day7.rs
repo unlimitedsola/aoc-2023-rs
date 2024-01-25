@@ -10,9 +10,15 @@ fn main() {
 }
 
 fn solve(input: &str, p2: bool) {
-    let ans: u64 = input.lines()
+    let ans: u64 = input
+        .lines()
         .map(|l| l.split_once(' ').unwrap())
-        .map(|(h, b)| (Hand::parse(h.chars().collect_vec().try_into().unwrap(), p2), b.parse::<u64>().unwrap()))
+        .map(|(h, b)| {
+            (
+                Hand::parse(h.chars().collect_vec().try_into().unwrap(), p2),
+                b.parse::<u64>().unwrap(),
+            )
+        })
         .sorted_by_cached_key(|(Hand(t, c), _)| (*t, pos(c, p2)))
         .enumerate()
         .map(|(i, (_, b))| b * (i + 1) as u64)
@@ -20,11 +26,20 @@ fn solve(input: &str, p2: bool) {
     println!("part{}: {}", if p2 { 2 } else { 1 }, ans)
 }
 
-const P1: [char; 13] = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'];
-const P2: [char; 13] = ['J', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A'];
+const P1: [char; 13] = [
+    '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A',
+];
+const P2: [char; 13] = [
+    'J', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A',
+];
 
 fn pos(c: &[char; 5], p2: bool) -> [usize; 5] {
-    c.map(|c| if p2 { P2 } else { P1 }.iter().position(|p| *p == c).unwrap())
+    c.map(|c| {
+        if p2 { P2 } else { P1 }
+            .iter()
+            .position(|p| *p == c)
+            .unwrap()
+    })
 }
 
 #[derive(Debug)]

@@ -6,9 +6,11 @@ use aoc_2023_rust::aoc;
 fn main() {
     let aoc = aoc().unwrap();
     let input = aoc.read_input(9).unwrap();
-    let nums = input.lines()
+    let nums = input
+        .lines()
         .map(|l| l.split_ascii_whitespace())
-        .map(|nums| nums.map(|n| n.parse::<i64>().unwrap()).collect_vec()).collect_vec();
+        .map(|nums| nums.map(|n| n.parse::<i64>().unwrap()).collect_vec())
+        .collect_vec();
     part1(&nums);
     part2(&nums);
 }

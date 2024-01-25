@@ -8,7 +8,8 @@ fn main() {
 }
 
 fn part1(input: &str) {
-    let sum: u32 = input.lines()
+    let sum: u32 = input
+        .lines()
         .map(|l| {
             let mut digits = l.chars().filter(char::is_ascii_digit);
             let first = digits.next().unwrap();
@@ -21,7 +22,9 @@ fn part1(input: &str) {
 }
 
 fn part2(input: &str) {
-    let nums = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine"];
+    let nums = [
+        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    ];
     let mut sum = 0;
     for line in input.lines() {
         let mut offset = 0;

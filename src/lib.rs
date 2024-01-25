@@ -1,12 +1,12 @@
-use std::fs::{create_dir_all, File, read_to_string};
+use std::fs::{create_dir_all, read_to_string, File};
 use std::io::Write;
 use std::path::PathBuf;
 
 use anyhow::{bail, Context, Result};
 use reqwest::blocking::Client;
 use reqwest::header::{COOKIE, USER_AGENT};
-use time::{Date, OffsetDateTime, PrimitiveDateTime, UtcOffset};
 use time::Month::December;
+use time::{Date, OffsetDateTime, PrimitiveDateTime, UtcOffset};
 
 const YEAR: i32 = 2023;
 
@@ -27,7 +27,12 @@ impl AoC {
         let inputs = PathBuf::from(format!("./inputs/{year}"));
         create_dir_all(&inputs)?;
         let http = Client::new();
-        Ok(Self { year, token, inputs, http })
+        Ok(Self {
+            year,
+            token,
+            inputs,
+            http,
+        })
     }
 
     pub fn read_input(&self, day: u8) -> Result<String> {
@@ -44,24 +49,37 @@ impl AoC {
     }
 
     fn fetch_input(&self, day: u8) -> Result<String> {
-        if let 1..=25 = day {} else {
+        if let 1..=25 = day {
+        } else {
             bail!("day must be in range 1..=25")
         }
 
         let starts = PrimitiveDateTime::new(
             Date::from_calendar_date(self.year, December, day)?,
             time::Time::from_hms(0, 0, 0)?,
-        ).assume_offset(UtcOffset::from_hms(-5, 0, 0)?);
+        )
+        .assume_offset(UtcOffset::from_hms(-5, 0, 0)?);
 
         let now = OffsetDateTime::now_utc();
 
         if starts > now {
-            bail!("day {} is not started yet, remaining: {}", day, starts - now)
+            bail!(
+                "day {} is not started yet, remaining: {}",
+                day,
+                starts - now
+            )
         }
 
-        self.http.get(format!("https://adventofcode.com/{year}/day/{day}/input", year = self.year))
+        self.http
+            .get(format!(
+                "https://adventofcode.com/{year}/day/{day}/input",
+                year = self.year
+            ))
             .header(COOKIE, format!("session={token}", token = self.token))
-            .header(USER_AGENT, "Rustacean: @unlimitedsola (dev at sola dot love)")
+            .header(
+                USER_AGENT,
+                "Rustacean: @unlimitedsola (dev at sola dot love)",
+            )
             .send()?
             .text()
             .context("failed to fetch input")

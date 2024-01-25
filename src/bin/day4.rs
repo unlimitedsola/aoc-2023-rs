@@ -10,7 +10,8 @@ fn main() {
 }
 
 fn parse_cards(input: &str) -> Vec<usize> {
-    input.lines()
+    input
+        .lines()
         .map(|line| {
             let (_, numbers) = line.split_once(": ").unwrap();
             let (winning_nums, my_nums) = numbers.split_once(" | ").unwrap();
@@ -21,7 +22,9 @@ fn parse_cards(input: &str) -> Vec<usize> {
 }
 
 fn parse_nums(nums: &str) -> Vec<usize> {
-    nums.split_ascii_whitespace().filter_map(|n| n.parse().ok()).collect()
+    nums.split_ascii_whitespace()
+        .filter_map(|n| n.parse().ok())
+        .collect()
 }
 
 fn wins(winning: &[usize], my: &[usize]) -> usize {
@@ -29,10 +32,7 @@ fn wins(winning: &[usize], my: &[usize]) -> usize {
 }
 
 fn part1(wins: &[usize]) {
-    let sum: usize = wins.iter()
-        .filter(|&&w| w > 0)
-        .map(|&w| 1 << (w - 1))
-        .sum();
+    let sum: usize = wins.iter().filter(|&&w| w > 0).map(|&w| 1 << (w - 1)).sum();
     println!("part1: {sum}")
 }
 

@@ -21,7 +21,10 @@ struct Num {
 impl Num {
     fn parse(input: &str) -> Vec<Num> {
         let mut nums: Vec<Num> = vec![];
-        input.lines().enumerate().for_each(|(y, line)| Self::parse_line(y, line, &mut nums));
+        input
+            .lines()
+            .enumerate()
+            .for_each(|(y, line)| Self::parse_line(y, line, &mut nums));
         nums
     }
 
@@ -45,19 +48,22 @@ impl Num {
 
     fn touches(&self, x: usize, y: usize) -> bool {
         let by = y == self.y || y + 1 == self.y || self.y + 1 == y; // same line, above, below
-        let bx = x + 1 == self.x || x == self.x + self.len - 1 || (x >= self.x && x <= self.x + self.len); // before, after, inside
+        let bx = x + 1 == self.x
+            || x == self.x + self.len - 1
+            || (x >= self.x && x <= self.x + self.len); // before, after, inside
         by && bx
     }
 }
 
 fn part1(input: &str, nums: &mut [Num]) {
     input.lines().enumerate().for_each(|(y, line)| {
-        line.match_indices(|c: char| !c.is_numeric() && c != '.').for_each(|(x, _)| {
-            nums.iter_mut()
-                .filter(|num| !num.found)
-                .filter(|num| num.touches(x, y))
-                .for_each(|num| num.found = true);
-        });
+        line.match_indices(|c: char| !c.is_numeric() && c != '.')
+            .for_each(|(x, _)| {
+                nums.iter_mut()
+                    .filter(|num| !num.found)
+                    .filter(|num| num.touches(x, y))
+                    .for_each(|num| num.found = true);
+            });
     });
     let sum: u32 = nums.iter().filter(|num| num.found).map(|num| num.num).sum();
     println!("part1: {sum}")

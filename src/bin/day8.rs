@@ -22,17 +22,21 @@ struct Loc(String, String);
 
 impl Loc {
     fn parse(lines: Lines) -> HashMap<String, Loc> {
-        lines.map(|line| (
-            line[0..3].to_string(),
-            Loc(line[7..10].to_owned(), line[12..15].to_owned())
-        )).collect()
+        lines
+            .map(|line| {
+                (
+                    line[0..3].to_string(),
+                    Loc(line[7..10].to_owned(), line[12..15].to_owned()),
+                )
+            })
+            .collect()
     }
 
     fn nav(&self, d: char) -> &str {
         match d {
             'L' => &self.0,
             'R' => &self.1,
-            _ => unreachable!("invalid direction: {}", d)
+            _ => unreachable!("invalid direction: {}", d),
         }
     }
 }
@@ -55,7 +59,10 @@ fn part1(moves: &[char], locs: &HashMap<String, Loc>) {
 
 fn part2(moves: &[char], locs: &HashMap<String, Loc>) {
     let src = locs.keys().filter(|k| k.ends_with('A')).collect_vec();
-    let cnt = src.iter().map(|&s| part2_len(locs.get(s).unwrap(), moves, locs)).collect_vec();
+    let cnt = src
+        .iter()
+        .map(|&s| part2_len(locs.get(s).unwrap(), moves, locs))
+        .collect_vec();
     let ans = cnt.into_iter().reduce(lcm).unwrap();
     println!("part2: {}", ans)
 }
@@ -71,6 +78,6 @@ fn part2_len<'a>(mut cur: &'a Loc, moves: &[char], locs: &'a HashMap<String, Loc
             }
             cur = locs.get(dst).unwrap();
         }
-    };
+    }
     mv_cnt
 }

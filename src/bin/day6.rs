@@ -10,20 +10,31 @@ fn main() {
 }
 
 fn part1(input: &str) {
-    let (t, d) = input.lines()
+    let (t, d) = input
+        .lines()
         .map(|l| l.split_once(':').unwrap().1)
-        .map(|l| l.split_ascii_whitespace().map(|n| n.parse::<u32>().unwrap()))
-        .collect_tuple().unwrap();
+        .map(|l| {
+            l.split_ascii_whitespace()
+                .map(|n| n.parse::<u32>().unwrap())
+        })
+        .collect_tuple()
+        .unwrap();
 
-    let ans = t.zip(d).map(|(t, d)| solve(t as f64, d as f64)).reduce(|a, b| a * b).unwrap();
+    let ans = t
+        .zip(d)
+        .map(|(t, d)| solve(t as f64, d as f64))
+        .reduce(|a, b| a * b)
+        .unwrap();
     println!("part1: {}", ans)
 }
 
 fn part2(input: &str) {
-    let (t, d) = input.lines()
+    let (t, d) = input
+        .lines()
         .map(|l| l.split_once(':').unwrap().1)
         .map(|l| l.replace(' ', "").parse::<u64>().unwrap())
-        .collect_tuple().unwrap();
+        .collect_tuple()
+        .unwrap();
 
     println!("part2: {}", solve(t as f64, d as f64))
 }

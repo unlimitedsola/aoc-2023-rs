@@ -20,7 +20,7 @@ fn part1(input: &str) {
                     "red" if count <= 12 => true,
                     "green" if count <= 13 => true,
                     "blue" if count <= 14 => true,
-                    _ => false
+                    _ => false,
                 };
                 if !valid {
                     continue 'game;
